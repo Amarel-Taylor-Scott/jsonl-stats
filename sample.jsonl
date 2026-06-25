@@ -1,0 +1,4 @@
+{"name": "alice", "age": 30, "tags": ["a", "b"]}
+{"name": "bob", "age": 42, "active": true}
+{"name": "carol", "active": false, "score": 9.5}
+{"name": "dave", "age": null, "tags": ["c"]}
