@@ -56,6 +56,11 @@ class TestParseJsonl(unittest.TestCase):
         with self.assertRaises(json.JSONDecodeError):
             list(jsonl_stats.parse_jsonl(io.StringIO('{"bad\n')))
 
+    def test_invalid_json_error_context(self):
+        with self.assertRaises(json.JSONDecodeError) as cm:
+            list(jsonl_stats.parse_jsonl(io.StringIO('{"invalid": json}\n')))
+        self.assertIn("line 1:", str(cm.exception))
+
 
 class TestFormatText(unittest.TestCase):
     def test_output_contains_sections(self):

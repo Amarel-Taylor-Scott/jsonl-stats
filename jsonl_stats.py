@@ -40,7 +40,12 @@ def analyze_records(records: Iterable[Dict[str, Any]]) -> Dict[str, Any]:
         record_count += 1
         for key, value in record.items():
             key_frequency[key] += 1
-            type_histograms.setdefault(key, Counter())[type_name(value)] += 1
+            # Use get() to avoid creating unnecessary Counter objects
+            hist = type_histograms.get(key)
+            if hist is None:
+                hist = Counter()
+                type_histograms[key] = hist
+            hist[type_name(value)] += 1
 
     return {
         "record_count": record_count,
@@ -61,9 +66,10 @@ def parse_jsonl(stream: TextIO) -> Iterable[Dict[str, Any]]:
         try:
             obj = json.loads(line)
         except json.JSONDecodeError as exc:
+            # Create a new exception with better context while preserving the original
             raise json.JSONDecodeError(
                 f"invalid JSON on line {line_no}: {exc.msg}",
-                exc.doc,
+                line,
                 exc.pos,
             ) from exc
         if not isinstance(obj, dict):
